@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>题目跳转工具</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>题目跳转工具</h1>
+        <select id="site">
+            <option value="luogu">洛谷</option>
+            <option value="atcoder">AtCoder</option>
+            <option value="codeforces">Codeforces</option>
+        </select>
+        <div id="luogu-options" class="options">
+            <label for="problemId">题目编号：</label>
+            <input type="text" id="problemId" placeholder="例如 P1001">
+        </div>
+        <div id="atcoder-options" class="options" style="display: none;">
+            <label for="contestType">比赛类型：</label>
+            <input type="text" id="contestType" placeholder="例如 ABC">
+            <label for="contestNumber">比赛场次：</label>
+            <input type="number" id="contestNumber" placeholder="例如 123">
+            <label for="problemLetter">题目编号：</label>
+            <input type="text" id="problemLetter" placeholder="例如 A">
+        </div>
+        <div id="codeforces-options" class="options" style="display: none;">
+            <label for="contestNumberCF">比赛场次：</label>
+            <input type="number" id="contestNumberCF" placeholder="例如 1234">
+            <label for="problemCode">题目编号：</label>
+            <input type="text" id="problemCode" placeholder="例如 A">
+        </div>
+        <div class="buttons">
+            <button class="jump" onclick="jumpToProblem()">跳转</button>
+            <button class="random" onclick="randomJump()">随机跳转</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
