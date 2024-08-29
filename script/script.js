@@ -31,35 +31,71 @@ document.addEventListener('DOMContentLoaded', () => {
             luoguOptions.style.display = 'block';
             inputFields.luogu.focus();
         }
+
+        clearInputs(site);
     }
 
-    // Initialize display based on the default site
-    showOptions(siteSelect.value);
-
-    siteSelect.addEventListener('change', (e) => {
-        showOptions(e.target.value);
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.altKey) {
-            switch (e.key) {
-                case 'ArrowDown':
-                    switchToNextSite();
-                    break;
-                case 'ArrowUp':
-                    switchToPreviousSite();
-                    break;
-                case 'ArrowLeft':
-                    switchToPreviousInput();
-                    break;
-                case 'ArrowRight':
-                    switchToNextInput();
-                    break;
-            }
-        } else if (e.key === 'Enter') {
-            performAction();
+    function clearInputs(site) {
+        if (site === 'atcoder') {
+            inputFields.atcoder.contestType.value = '';
+            inputFields.atcoder.contestNumber.value = '';
+            inputFields.atcoder.problemLetter.value = '';
+        } else if (site === 'codeforces') {
+            inputFields.codeforces.contestNumberCF.value = '';
+            inputFields.codeforces.problemCode.value = '';
+        } else if (site === 'luogu') {
+            inputFields.luogu.value = '';
         }
-    });
+    }
+
+    function performAction() {
+        const site = siteSelect.value;
+        if (site === 'atcoder') {
+            const contestType = inputFields.atcoder.contestType.value.trim().toUpperCase();
+            const contestNumber = inputFields.atcoder.contestNumber.value.trim();
+            const problemLetter = inputFields.atcoder.problemLetter.value.trim().toUpperCase();
+            if (!contestType || !contestNumber || !problemLetter) {
+                alert('请完整填写比赛类型、场次和题目编号！');
+                return;
+            }
+            window.open(`https://atcoder.jp/contests/${contestType}${contestNumber}/tasks/${contestType}${contestNumber}_${problemLetter}`, '_blank');
+        } else if (site === 'codeforces') {
+            const contestNumber = inputFields.codeforces.contestNumberCF.value.trim();
+            const problemCode = inputFields.codeforces.problemCode.value.trim().toUpperCase();
+            if (!contestNumber || !problemCode) {
+                alert('请完整填写比赛场次和题目编号！');
+                return;
+            }
+            window.open(`https://codeforces.com/contest/${contestNumber}/problem/${problemCode}`, '_blank');
+        } else if (site === 'luogu') {
+            const problemId = inputFields.luogu.value.trim();
+            if (!problemId) {
+                alert('请填写题目编号！');
+                return;
+            }
+            if (/^\d+$/.test(problemId)) {
+                window.open(`https://www.luogu.com.cn/problem/P${problemId}`, '_blank');
+            } else {
+                window.open(`https://www.luogu.com.cn/problem/${problemId}`, '_blank');
+            }
+        }
+    }
+
+    function jumpToProblem() {
+        performAction();
+    }
+
+    function randomJump() {
+        const site = siteSelect.value;
+        if (site === 'luogu') {
+            const min = 1000; // minimum problem ID for Luogu
+            const max = 9999; // maximum problem ID for Luogu
+            const randomId = Math.floor(Math.random() * (max - min + 1)) + min;
+            window.open(`https://www.luogu.com.cn/problem/P${randomId}`, '_blank');
+        } else {
+            alert('随机跳转功能仅支持洛谷！');
+        }
+    }
 
     function switchToNextSite() {
         const sites = ['luogu', 'atcoder', 'codeforces'];
@@ -100,65 +136,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getVisibleFields() {
-        let fields = [];
         const site = siteSelect.value;
-
+        const fields = [];
         if (site === 'atcoder') {
-            fields = [
-                inputFields.atcoder.contestType,
-                inputFields.atcoder.contestNumber,
-                inputFields.atcoder.problemLetter
-            ];
+            fields.push(inputFields.atcoder.contestType, inputFields.atcoder.contestNumber, inputFields.atcoder.problemLetter);
         } else if (site === 'codeforces') {
-            fields = [
-                inputFields.codeforces.contestNumberCF,
-                inputFields.codeforces.problemCode
-            ];
+            fields.push(inputFields.codeforces.contestNumberCF, inputFields.codeforces.problemCode);
         } else if (site === 'luogu') {
-            fields = [inputFields.luogu];
+            fields.push(inputFields.luogu);
         }
-
         return fields;
     }
 
-    function performAction() {
-        const site = siteSelect.value;
-        if (site === 'atcoder') {
-            const contestType = inputFields.atcoder.contestType.value.trim();
-            const contestNumber = inputFields.atcoder.contestNumber.value.trim();
-            const problemLetter = inputFields.atcoder.problemLetter.value.trim().toUpperCase();
-            if (contestType && contestNumber && problemLetter) {
-                window.location.href = `https://atcoder.jp/contests/${contestType}${contestNumber}/tasks/${contestType}${contestNumber}_${problemLetter}`;
-            }
-        } else if (site === 'codeforces') {
-            const contestNumber = inputFields.codeforces.contestNumberCF.value.trim();
-            const problemCode = inputFields.codeforces.problemCode.value.trim().toUpperCase();
-            if (contestNumber && problemCode) {
-                window.location.href = `https://codeforces.com/contest/${contestNumber}/problem/${problemCode}`;
-            }
-        } else if (site === 'luogu') {
-            const problemId = inputFields.luogu.value.trim();
-            if (problemId) {
-                if (/^\d+$/.test(problemId)) {
-                    window.location.href = `https://www.luogu.com.cn/problem/P${problemId}`;
-                } else {
-                    window.location.href = `https://www.luogu.com.cn/problem/${problemId}`;
-                }
-            }
-        }
-    }
+    siteSelect.addEventListener('change', (e) => {
+        showOptions(e.target.value);
+    });
 
-    function jumpToProblem() {
-        performAction();
-    }
-
-    function randomJump() {
-        const site = siteSelect.value;
-        if (site === 'luogu') {
-            const min = 1000; // minimum problem ID for Luogu
-            const max = 9999; // maximum problem ID for Luogu
-            const randomId = Math.floor(Math.random() * (max - min + 1)) + min;
-            window.location.href = `https://www.luogu.com.cn/problem/P${randomId}`;
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.altKey) {
+            switch (e.key) {
+                case 'ArrowDown':
+                    switchToNextSite();
+                    break;
+                case 'ArrowUp':
+                    switchToPreviousSite();
+                    break;
+                case 'ArrowLeft':
+                    switchToPreviousInput();
+                    break;
+                case 'ArrowRight':
+                    switchToNextInput();
+                    break;
+            }
+        } else if (e.key === 'Enter') {
+            performAction();
         }
-    }
+    });
+
+    document.querySelector('.jump').addEventListener('click', jumpToProblem);
+    document.querySelector('.random').addEventListener('click', randomJump);
 });
